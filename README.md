@@ -28,10 +28,10 @@ Resulting RPM will be available at $(shell pwd)/RPMS/x86_64
 
 # Default locations
 
-binaries: /opt/kafka  
-data:     /var/lib/kafka  
-logs:     /var/log/kafka  
-configs:  /etc/kafka, /etc/sysconfig/kafka  
+binaries: /opt/kafka/bin  
+data:     /opt/kafka/data  
+logs:     /opt/kafka/logs  
+configs:  /opt/kafka/config, /etc/sysconfig/kafka  
 
 # kafka-graphite
 

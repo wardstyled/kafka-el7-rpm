@@ -5,8 +5,8 @@
 %define _group       kafka
 %define _prefix      /opt
 %define _conf_dir    %{_sysconfdir}/%{_name}
-%define _log_dir     %{_var}/log/%{_name}
-%define _data_dir    %{_sharedstatedir}/%{_name}
+%define _log_dir     %{_prefix}/%{name}/logs
+%define _data_dir    %{_prefix}/%{name}/data
 Summary: Apache Kafka is publish-subscribe messaging rethought as a distributed commit log.
 Name: kafka
 Version: %{version}
@@ -42,17 +42,20 @@ rm -f libs/{*-javadoc.jar,*-scaladoc.jar,*-sources.jar,*-test.jar}
 
 %install
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/%{name}/{libs,bin,config}
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/%{name}/config/kraft
 mkdir -p $RPM_BUILD_ROOT%{_log_dir}
 mkdir -p $RPM_BUILD_ROOT%{_data_dir}
 mkdir -p $RPM_BUILD_ROOT%{_unitdir}
-mkdir -p $RPM_BUILD_ROOT%{_conf_dir}/
+mkdir -p $RPM_BUILD_ROOT%{_conf_dir}
 install -p -D -m 755 bin/*.sh $RPM_BUILD_ROOT%{_prefix}/%{name}/bin
-install -p -D -m 644 config/* $RPM_BUILD_ROOT%{_prefix}/%{name}/config
-install -p -D -m 644 config/server.properties $RPM_BUILD_ROOT%{_conf_dir}/
-sed -i "s:^log.dirs=.*:log.dirs=%{_data_dir}:" $RPM_BUILD_ROOT%{_conf_dir}/server.properties
+install -p -D -m 644 config/*.properties $RPM_BUILD_ROOT%{_prefix}/%{name}/config
+install -p -D -m 644 config/*.conf $RPM_BUILD_ROOT%{_prefix}/%{name}/config
+install -p -D -m 644 config/kraft/* $RPM_BUILD_ROOT%{_prefix}/%{name}/config/kraft
+install -p -D -m 644 config/server.properties $RPM_BUILD_ROOT%{_prefix}/%{name}/config/
+sed -i "s:^log.dirs=.*:log.dirs=%{_data_dir}:" $RPM_BUILD_ROOT%{_prefix}/%{name}/config/server.properties
 install -p -D -m 755 %{S:1} $RPM_BUILD_ROOT%{_unitdir}/
 install -p -D -m 644 %{S:2} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/%{name}
-install -p -D -m 644 %{S:3} $RPM_BUILD_ROOT%{_conf_dir}/
+install -p -D -m 644 %{S:3} $RPM_BUILD_ROOT%{_prefix}/%{name}/config/
 install -p -D -m 644 %{S:4} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/%{name}
 install -p -D -m 644 libs/* $RPM_BUILD_ROOT%{_prefix}/%{name}/libs
 %if %{build_with_metrics}
@@ -83,7 +86,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_unitdir}/%{name}.service
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
-%config(noreplace) %{_conf_dir}/*
+#%config(noreplace) %{_conf_dir}/*
 %{_prefix}/%{name}
 %attr(0755,kafka,kafka) %dir %{_log_dir}
 %attr(0700,kafka,kafka) %dir %{_data_dir}

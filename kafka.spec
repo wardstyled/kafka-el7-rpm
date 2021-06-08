@@ -7,6 +7,7 @@
 %define _conf_dir    %{_sysconfdir}/%{_name}
 %define _log_dir     %{_prefix}/%{name}/logs
 %define _data_dir    %{_prefix}/%{name}/data
+%define _defaultdocdir %{_prefix}/%{name}/doc
 Summary: Apache Kafka is publish-subscribe messaging rethought as a distributed commit log.
 Name: kafka
 Version: %{version}
@@ -26,7 +27,7 @@ Source7: kafka-graphite-1.0.5.jar
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Prefix: %{_prefix}
 Vendor: Apache Software Foundation
-Packager: Ivan Dyachkov <ivan.dyachkov@klarna.com>
+Packager: Ivan Yankov <is.yankov@jet.su>
 Provides: kafka kafka-server
 BuildRequires: systemd
 %systemd_requires
@@ -88,6 +89,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 #%config(noreplace) %{_conf_dir}/*
 %{_prefix}/%{name}
+%attr(0755,kafka,kafka) %{_prefix}/%{name}
 %attr(0755,kafka,kafka) %dir %{_log_dir}
 %attr(0700,kafka,kafka) %dir %{_data_dir}
 %doc NOTICE
